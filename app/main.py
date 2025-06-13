@@ -163,6 +163,7 @@ class CloudEnhancedFallDetectionSystem:
                 model_path=self.config.detection.model_path,
                 model_name="mobilenet",
                 confidence_threshold=self.config.detection.confidence_threshold,
+                
             
             ) if check_path else H5FallDetectorRealtime(
                     model_path=self.config.detection.model_path,
@@ -299,6 +300,14 @@ class CloudEnhancedFallDetectionSystem:
             pose_data: Dữ liệu pose raw (dict)
             location: Tên vị trí từ camera ID
             '''
+            keypoint_corr = detection_result.get('keypoint_correlation', 0)
+            # If keypoint_corr is a dict, set to 0.0 or extract a float value if appropriate
+            if isinstance(keypoint_corr, dict):
+                keypoint_corr = 0.0
+            try:
+                keypoint_corr = float(keypoint_corr)
+            except Exception:
+                keypoint_corr = 0.0
             incident_data = {
                 'camera_id': str(frame_data.camera_id),
                 'timestamp': frame_data.timestamp,

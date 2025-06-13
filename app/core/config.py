@@ -66,8 +66,8 @@ class DetectionConfig:
 
 @dataclass
 class NotificationConfig:
-    sms_enabled: bool = False
-    telegram_enabled: bool = True
+
+    telegram_enabled: bool = False
     email_enabled: bool = True
     cooldown_period: int = 30  # seconds # Tránh spam notifications (30 giây)
      # Email settings
@@ -190,6 +190,7 @@ class Config:
         self.notification = NotificationConfig()
         self.database = DatabaseConfig()
         self.api = APIConfig()
+        self.cloud_server = CloudServerConfig()
 
 # Singleton instance
 config = Config()

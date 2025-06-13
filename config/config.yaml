@@ -34,17 +34,16 @@ camera:
 #     velocity_threshold: 0.5
 #     duration_threshold: 2.0
 detection:
-  model_path: "models/fall_detection_model_final_2.h5"
+  model_path: "models/posenet_mobilenet_v1.tflite"
   model_name: "mobilenet"
-  confidence_threshold: 0.4
+  confidence_threshold: 0.5
   fall_threshold:
     height_ratio: 0.3
     angle_threshold: 60
     velocity_threshold: 0.5
-    duration_threshold: 2.0
+    duration_threshold: 1.0
 
 notification:
-  sms_enabled: true
   email_enabled: true
   cooldown_period: 30
   
