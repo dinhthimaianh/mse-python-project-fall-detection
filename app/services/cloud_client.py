@@ -1,6 +1,37 @@
 """
 Cloud client for communicating with Replit backend service
+
+TÓM TẮT CHỨC NĂNG cloud_client
+1. Configuration:
+    Setup connection đến Replit cloud service
+    Configure email notifications remotely
+2. Data Sending:
+    Gửi fall incidents với image data (base64)
+    Gửi health data định kỳ (theo cấu hình, mặc định 5 phút)
+3. Data Receiving:
+    Lấy danh sách incidents từ cloud
+    Lấy statistics từ cloud service
+4. Background Monitoring:
+    Thread riêng để gửi health data định kỳ
+    Graceful start/stop monitoring
+5. Statistics Tracking:
+    Track incidents sent, health reports, failed requests
+    Real-time connection status
+
 """
+'''
+ Import các thư viện cần thiết:
+
+requests: Thư viện HTTP client để gọi API
+logging: Ghi log hệ thống
+base64: Encode/decode dữ liệu base64 (cho images)
+json: Xử lý dữ liệu JSON
+typing: Type hints để khai báo kiểu dữ liệu
+datetime: Xử lý ngày giờ
+threading: Xử lý đa luồng cho background tasks
+time: Xử lý thời gian (timestamps, sleep)
+io.BytesIO: Buffer trong memory cho binary data
+'''
 import requests
 import logging
 import base64
@@ -19,17 +50,36 @@ class CloudClient:
         self.logger = logging.getLogger(__name__)
         
         # Cloud service configuration
+        '''
+        Thiết lập cấu hình cloud service:
+
+        base_url: URL của Replit service, default là placeholder URL
+        api_key: API key để authentication (hiện tại empty)
+        system_id: ID unique cho hệ thống local, default dùng timestamp
+        timeout: Timeout cho HTTP requests (10 giây)
+        '''
         self.base_url = config.get('cloud_service_url', 'https://your-replit-url.replit.app')
         self.api_key = config.get('api_key', '')
         self.system_id = config.get('system_id', f'system_{int(time.time())}')
         self.timeout = config.get('timeout', 10)
         
         # Health monitoring
+        '''
+        health_interval: Khoảng thời gian gửi health data (300s = 5 phút)
+        health_thread: Thread riêng để chạy health monitoring
+        running: Flag để control thread có đang chạy không
+        '''
         self.health_interval = config.get('health_interval', 300)  # 5 minutes
         self.health_thread = None
         self.running = False
         
         # Statistics
+        '''Dictionary lưu thống kê hoạt động:
+
+            incidents_sent: Số incidents đã gửi thành công
+            health_reports_sent: Số health reports đã gửi
+            failed_requests: Số requests thất bại
+            last_successful_ping: Thời điểm ping thành công cuối cùng'''
         self.stats = {
             'incidents_sent': 0,
             'health_reports_sent': 0,
@@ -80,6 +130,17 @@ class CloudClient:
     
     def send_fall_incident(self, incident_data: Dict[str, Any], image_data: Optional[bytes] = None) -> bool:
         """Send fall incident to cloud service"""
+        '''
+        Chuẩn bị dữ liệu incident để gửi cloud:
+
+            camera_id: Convert thành string, default 'camera_0'
+            timestamp: Format timestamp bằng helper function
+            confidence: Convert thành float, default 0
+            leaning_angle: Convert float nếu có, None nếu không có
+            keypoint_correlation: Tương tự leaning_angle
+            pose_data: Giữ nguyên dữ liệu pose (dict)
+            location: Convert thành string, default 'unknown'
+        '''
         try:
             # Prepare incident data
             cloud_incident = {
@@ -93,6 +154,10 @@ class CloudClient:
             }
             
             # Add image data if available
+            '''Kiểm tra nếu có image data (bytes)
+                Encode image bytes thành base64 string để gửi qua JSON
+                .decode('utf-8'): Convert bytes thành string
+                Catch exception nếu encode thất bại và ghi warning'''
             if image_data:
                 try:
                     cloud_incident['image_data'] = base64.b64encode(image_data).decode('utf-8')
