@@ -210,9 +210,9 @@ class DisplayService:
                              (meter_x + fill_w, meter_y + meter_h), fill_color, -1)
                 
                 # Text
-                conf_text = f"Risk: {confidence:.1%}"
-                cv2.putText(frame, conf_text, (meter_x, meter_y - 5), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, colors['text'], 1)
+                # conf_text = f"Risk: {confidence:.1%}"
+                # cv2.putText(frame, conf_text, (meter_x, meter_y - 5), 
+                #            cv2.FONT_HERSHEY_SIMPLEX, 0.5, colors['text'], 1)
         
         # Instructions at bottom
         instructions = [

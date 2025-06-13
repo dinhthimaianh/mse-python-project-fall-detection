@@ -36,7 +36,7 @@ class CloudEnhancedFallDetectionSystem:
         self.config = config_.config
         
         # Create directories
-        setup_directories()
+        # setup_directories()
         
         # Initialize components
         self.fall_detector = None
