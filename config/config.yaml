@@ -1,0 +1,79 @@
+# config/config.yaml
+cloud_server:
+  cloud_service_url: "https://00c4a11e-b805-4819-9901-d2653b58bea9-00-2qtiolcxbukam.sisko.replit.dev"
+  api_key:  ""
+  system_id: 'local_system_'
+  health_interval: 60  # seconds
+  timeout: 60  # seconds
+
+camera:
+  device_id: 0
+  resolution: [1600, 1200]
+  fps: 15
+  buffer_size: 3
+  capture_interval: 0.5
+
+# detection:
+#   # Có thể dùng .h5 hoặc .tflite
+#   model_path: "models/posenet_mobilenet_v1.tflite"  # Hoặc .tflite
+#   model_name: "mobilenet"
+#   confidence_threshold: 0.5
+  
+#   # Model-specific settings
+#   model_settings:
+#     h5:
+#       batch_size: 1
+#       use_gpu: false  # Set true nếu có GPU
+#       optimize_inference: true
+#     tflite:
+#       num_threads: 4
+#       use_edgetpu: false
+#   fall_threshold:
+#     height_ratio: 0.3
+#     angle_threshold: 60
+#     velocity_threshold: 0.5
+#     duration_threshold: 2.0
+detection:
+  model_path: "models/fall_detection_model_final_2.h5"
+  model_name: "mobilenet"
+  confidence_threshold: 0.4
+  fall_threshold:
+    height_ratio: 0.3
+    angle_threshold: 60
+    velocity_threshold: 0.5
+    duration_threshold: 2.0
+
+notification:
+  sms_enabled: true
+  email_enabled: true
+  cooldown_period: 30
+  
+  # Email configuration
+  email:
+    enabled: true
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: "anhdtm0897@gmail.com"
+    sender_password: "kwucalgywwnuroas"  # Gmail App Password
+    use_tls: true
+    # Telegram configuration  
+  telegram:
+    enabled: false
+    bot_token: ""  # From @BotFather
+    chat_ids: [""]  # List of chat IDs to send alerts
+  emergency_contacts:
+    - name: "MAI ANH"
+      email: "maybeiwaswrong1@gmail.com"
+      telegram_chat_id: "@anhdtm"
+      priority: "1"
+
+database:
+  type: "sqlite"
+  url: "sqlite:///fall_detection.db"
+  echo: false
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_enabled: true
