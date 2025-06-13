@@ -55,7 +55,7 @@ class CloudEnhancedFallDetectionSystem:
     
     def __init__(self):
         # Setup logging
-        setup_logging(enable=True)
+        setup_logging(enable=False)
         self.logger = logging.getLogger(__name__)
         
         # Load configuration
@@ -313,7 +313,7 @@ class CloudEnhancedFallDetectionSystem:
                 'timestamp': frame_data.timestamp,
                 'confidence': float(detection_result.get('confidence', 0)),
                 'angle': float(detection_result.get('leaning_angle', 0)),
-                'keypoint_corr': float(detection_result.get('keypoint_correlation', 0)),
+                'keypoint_corr': keypoint_corr,
                 'pose_data': detection_result.get('pose_data'),
                 'location': self._get_location(frame_data.camera_id)
             }
