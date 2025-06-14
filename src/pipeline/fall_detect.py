@@ -1,4 +1,11 @@
 """Fall detection pipe element."""
+'''
+TFInferenceEngine: Engine chạy TensorFlow inference
+PoseEngine: Engine phát hiện pose từ ảnh
+DEFAULT_DATA_DIR: Thư mục data mặc định
+logging, math, time: Thư viện chuẩn Python
+PIL: Xử lý ảnh (Pillow)
+pathlib: Thao tác đường dẫn file'''
 from .inference import TFInferenceEngine
 from src.pipeline.pose_engine import PoseEngine
 from src import DEFAULT_DATA_DIR
@@ -32,7 +39,8 @@ class FallDetector():
                 'ai_models/posenet_mobilenet_v1_075_721_1281_quant_decoder_edgetpu.tflite'
         }
         """
-        
+        '''Khởi tạo TensorFlow inference engine với model và config
+            Lưu tên model để sử dụng sau'''
         self._tfengine = TFInferenceEngine(
                         model=model,
                         labels=labels,
@@ -44,9 +52,19 @@ class FallDetector():
 
         # previous pose detection information for frame at time t-1 and t-2 \
         # to compare pose changes against
+        '''Lưu thông tin pose của 2 frame trước đó (t-1 và t-2)
+        Dùng để so sánh thay đổi pose giữa các frame'''
         self._prev_data = [None] * 2
+        
 
         # Data of previous frames lookup constants
+        '''Định nghĩa các constant keys cho dictionary lưu trữ data của frame trước:
+
+            POSE_VAL: Dictionary chứa keypoints pose
+            TIMESTAMP: Thời điểm capture frame
+            THUMBNAIL: Ảnh thumbnail để hiển thị
+            LEFT/RIGHT_ANGLE_WITH_YAXIS: Góc của đường shoulder-hip với trục Y
+            BODY_VECTOR_SCORE: Điểm confidence của body vector'''
         self.POSE_VAL = '_prev_pose_dix'
         self.TIMESTAMP = '_prev_time'
         self.THUMBNAIL = '_prev_thumbnail'
@@ -54,6 +72,9 @@ class FallDetector():
         self.RIGHT_ANGLE_WITH_YAXIS = '_prev_right_angle_with_yaxis'
         self.BODY_VECTOR_SCORE = '_prev_body_vector_score'
 
+        # Tạo template dict cho data frame
+        # time.monotonic(): Thời gian monotonic (không bị ảnh hưởng system clock changes)
+        # Khởi tạo các giá trị default
         _dix = {self.POSE_VAL: [],
                 self.TIMESTAMP: time.monotonic(),
                 self.THUMBNAIL: None,
@@ -61,11 +82,16 @@ class FallDetector():
                 self.RIGHT_ANGLE_WITH_YAXIS: None,
                 self.BODY_VECTOR_SCORE: 0
                 }
-
+        # Index 0: Data của frame t-2 (2 frame trước)
+        # Index 1: Data của frame t-1 (1 frame trước)
+        # Khởi tạo cả 2 với cùng template
         # self._prev_data[0] : store data of frame at t-2
         # self._prev_data[1] : store data of frame at t-1
         self._prev_data[0] = self._prev_data[1] = _dix
-
+        '''
+        Khởi tạo PoseEngine với TF engine và model name
+        _fall_factor = 60: Ngưỡng góc để xác định té ngã (60 độ)
+        Lưu confidence threshold'''
         self._pose_engine = PoseEngine(self._tfengine, self.model_name)
         self._fall_factor = 60
         self.confidence_threshold = confidence_threshold

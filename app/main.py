@@ -388,7 +388,7 @@ class CloudEnhancedFallDetectionSystem:
                 return img_byte_arr.getvalue()
             return None
         except Exception as e:
-            self.logger.warning(f"⚠️ Frame capture failed: {e}")
+            self.logger.warning(f" Frame capture failed: {e}")
             return None
     
     def _get_health_data(self) -> Dict[str, Any]:
