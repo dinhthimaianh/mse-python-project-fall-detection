@@ -779,10 +779,7 @@ async def web_monitor_dashboard():
                     <div class="status-value online" id="system-status">🟢 ONLINE</div>
                     <div class="status-label">System Status</div>
                 </div>
-                <div class="status-card">
-                    <div class="status-value" id="uptime">0s</div>
-                    <div class="status-label">System Uptime</div>
-                </div>
+       
                 <div class="status-card">
                     <div class="status-value" id="total-incidents">-</div>
                     <div class="status-label">Total Incidents</div>
@@ -868,8 +865,7 @@ async def web_monitor_dashboard():
 
             function updateSystemStats(stats) {
                 // Calculate uptime
-                const uptimeSeconds = Math.floor((Date.now() - new Date(stats.timestamp).getTime()) / 1000) + 3600; // Rough estimate
-                document.getElementById('uptime').textContent = formatUptime(uptimeSeconds);
+         
 
                 // Update stats
                 const dbStats = stats.database_stats || {};
@@ -878,7 +874,7 @@ async def web_monitor_dashboard():
 
                 // Mock additional stats
                 document.getElementById('notifications-sent').textContent = Math.floor(dbStats.total_incidents * 0.8) || 0;
-     
+
             }
 
             function updateIncidents(incidents) {
@@ -973,7 +969,7 @@ async def web_monitor_dashboard():
                     paper_bgcolor: 'rgba(0,0,0,0)'
                 };
 
-                
+
             }
 
             function updateIncidentChart(incidents) {
@@ -1113,9 +1109,6 @@ async def get_system_health():
     except Exception as e:
         logger.error(f"Failed to get system health: {e}")
         return []
-
-
-
 
 
 if __name__ == "__main__":
